@@ -52,6 +52,7 @@ while size(list,1) > nfile
         
     end
 end
+
         
 %         % Classify files as either new, old but referenced differently
 %         
@@ -136,7 +137,21 @@ end
 idx = setdiff(1:nall, texidx);
 
 for ii = idx
-    copyfile(biglist{ii,1}, fullfile(newfolder, biglist{ii,4}));
+    f1 = biglist{ii,1};
+    f2 = fullfile(newfolder, biglist{ii,4});
+    
+    [pth1, fl1, ex1] = fileparts(f1);
+    [pth2, fl2, ex2] = fileparts(f2);
+    
+    if isempty(ex1) && isempty(ex2)
+        f1 = fullfile(pth1, [fl1 '.tex']);
+        f2 = fullfile(pth2, [fl2 '.tex']);
+    else
+        copyfile(f1, f2);
+    end
+        
+    
+%     copyfile(biglist{ii,1}, fullfile(newfolder, biglist{ii,4}));
 end
 
 
@@ -247,6 +262,10 @@ function [absname, refname] = findtex(file)
 
 [pth, fname, ext] = fileparts(file);
 
+if isempty(ext)
+    file = fullfile(pth, [fname '.tex']);
+end
+
 fid = fopen(file);
 txt = textscan(fid, '%s', 'delimiter', '\n');
 fclose(fid);
@@ -261,6 +280,9 @@ absname = getabsolutepath(pth, refname);
 function [absname, refname] = findchild(file)
 
 [pth, fname, ext] = fileparts(file);
+if isempty(ext)
+    file = fullfile(pth, [fname '.tex']);
+end
 
 fid = fopen(file);
 txt = textscan(fid, '%s', 'delimiter', '\n');
