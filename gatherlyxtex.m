@@ -262,9 +262,18 @@ function [absname, refname] = findtex(file)
 
 [pth, fname, ext] = fileparts(file);
 
-if isempty(ext)
-    file = fullfile(pth, [fname '.tex']);
+if ~exist(file, 'file')
+    [s,r] = system(sprintf('kpsewhich %s', file));
+    if ~s
+        file = regexprep(r, '\n', '');
+    else
+        error(r);
+    end
 end
+
+% if isempty(ext)
+%     file = fullfile(pth, [fname '.tex']);
+% end
 
 fid = fopen(file);
 txt = textscan(fid, '%s', 'delimiter', '\n');
@@ -280,9 +289,19 @@ absname = getabsolutepath(pth, refname);
 function [absname, refname] = findchild(file)
 
 [pth, fname, ext] = fileparts(file);
-if isempty(ext)
-    file = fullfile(pth, [fname '.tex']);
+
+if ~exist(file, 'file')
+    [s,r] = system(sprintf('kpsewhich %s', file));
+    if ~s
+        file = regexprep(r, '\n', '');
+    else
+        error(r);
+    end
 end
+
+% if isempty(ext)
+%     file = fullfile(pth, [fname '.tex']);
+% end
 
 fid = fopen(file);
 txt = textscan(fid, '%s', 'delimiter', '\n');
