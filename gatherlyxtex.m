@@ -53,6 +53,13 @@ while size(list,1) > nfile
     end
 end
 
+for ii = 1:size(list,1)
+    [~,~,ex] = fileparts(list{ii,1});
+    if isempty(ex)
+        list{ii,1} = [list{ii,1} '.tex'];
+    end
+end
+
         
 %         % Classify files as either new, old but referenced differently
 %         
